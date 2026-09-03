@@ -1,0 +1,94 @@
+// ============================================================
+// WorkEdit 样式
+// ============================================================
+
+.we {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  padding-bottom: $space-3xl;
+  max-width: 900px;
+
+  &__spin {
+    display: contents;
+  }
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__head-left {
+    display: flex;
+    align-items: center;
+    gap: $space-base;
+    min-width: 0;
+  }
+
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    border: none;
+    border-radius: $radius-lg;
+    background: $c-surface-container;
+    color: $c-on-surface;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &:hover {
+      background: $c-surface-container-high;
+    }
+  }
+
+  &__heading {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__crumb {
+    font-family: $font-code;
+    font-size: $text-label-sm;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $c-outline;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: $text-headline-sm;
+    font-weight: 600;
+    color: $c-on-surface;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__bar {
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: $space-base;
+    padding: $space-base;
+    margin: 0 (-$space-base);
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid $c-divider;
+
+    .ant-btn {
+      min-width: 120px;
+      font-weight: 500;
+    }
+  }
+}

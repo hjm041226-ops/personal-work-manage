@@ -1,0 +1,67 @@
+// ============================================================
+// CategoryPills 样式（demo 胶囊风格）
+// ============================================================
+
+.category-pills {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+  overflow-x: auto;
+  padding: 2px 0;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    padding: 0 12px;
+    border: none;
+    border-radius: $radius-pill;
+    background: $c-surface-low;
+    color: $c-on-surface-variant;
+    font-size: $text-label-md;
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+
+    &:hover {
+      background: $c-surface-container;
+      color: $c-on-surface;
+    }
+
+    &--active {
+      background: $c-secondary;
+      color: $c-on-secondary;
+      box-shadow: $shadow-level1;
+
+      &:hover {
+        background: $c-secondary;
+        color: $c-on-secondary;
+      }
+
+      .category-pills__badge {
+        background: rgba(255, 255, 255, 0.2);
+        color: $c-on-secondary;
+      }
+    }
+  }
+
+  &__badge {
+    display: inline-block;
+    min-width: 18px;
+    padding: 1px 6px;
+    border-radius: $radius-pill;
+    background: $c-surface-container-high;
+    color: $c-on-surface-variant;
+    font-family: $font-code;
+    font-size: $text-code-sm;
+    line-height: 16px;
+    text-align: center;
+  }
+}

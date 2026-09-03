@@ -1,0 +1,220 @@
+// ============================================================
+// WorkForm 样式（上传 / 编辑作品共用卡片表单）
+// ============================================================
+
+.wf {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  width: 100%;
+}
+
+.wf-card {
+  background: $c-surface;
+  border: 1px solid $c-divider;
+  border-radius: $radius-lg;
+  padding: $space-lg;
+  box-shadow: $shadow-level1;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-sm;
+    margin-bottom: $space-base;
+  }
+
+  &__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: $text-headline-sm;
+    font-weight: 600;
+    color: $c-on-surface;
+  }
+
+  &__icon {
+    color: $c-secondary;
+    font-size: 18px;
+  }
+
+  &__flag {
+    font-family: $font-code;
+    font-size: $text-code-sm;
+    letter-spacing: 0.06em;
+    color: $c-outline;
+  }
+
+  &__hint {
+    font-family: $font-code;
+    font-size: $text-code-sm;
+    color: $c-outline;
+    text-align: right;
+  }
+}
+
+.wf-form {
+  .ant-form-item {
+    margin-bottom: $space-base;
+  }
+
+  .ant-form-item-label > label {
+    font-size: $text-label-md;
+    font-weight: 500;
+    color: $c-on-surface;
+  }
+}
+
+.wf-id {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: $radius-lg;
+  background: $c-surface-low;
+  width: 100%;
+
+  &__hash {
+    font-family: $font-code;
+    font-size: $text-code-sm;
+    color: $c-secondary;
+    letter-spacing: 0.03em;
+  }
+}
+
+.wf-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: $space-base;
+
+  @media (max-width: $bp-mobile) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// 描述编辑区
+.wf-desc {
+  overflow: hidden;
+  border: 1px solid $c-divider;
+  border-radius: $radius-lg;
+  background: $c-surface;
+
+  .ant-input {
+    background: transparent;
+  }
+
+  &__area {
+    border: none !important;
+    box-shadow: none !important;
+    resize: vertical;
+    font-size: $text-body-md;
+    line-height: 1.7;
+    border-radius: 0;
+    padding: $space-base;
+  }
+
+  &__count {
+    padding: 4px 12px 8px;
+    text-align: right;
+    font-family: $font-code;
+    font-size: $text-code-sm;
+    color: $c-outline;
+    background: $c-surface;
+  }
+}
+
+// 开关行
+.wf-switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-base;
+  padding: 10px 0;
+
+  & + .wf-switch-row {
+    border-top: 1px dashed $c-divider;
+  }
+
+  &__text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__label {
+    font-size: $text-label-md;
+    font-weight: 500;
+    color: $c-on-surface;
+  }
+
+  &__desc {
+    font-size: $text-body-sm;
+    color: $c-outline;
+  }
+}
+
+// 标签
+.wf-tags {
+  padding-top: $space-base;
+
+  &__label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: $text-label-md;
+    font-weight: 500;
+    color: $c-on-surface;
+  }
+
+  &__box {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $space-xs;
+    padding: $space-sm;
+    border: 1px solid $c-divider;
+    border-radius: $radius-md;
+    background: $c-surface;
+  }
+
+  &__chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 28px;
+    padding: 0 10px;
+    border-radius: $radius-md;
+    background: $c-surface-container;
+    font-family: $font-code;
+    font-size: $text-label-md;
+    color: $c-on-surface;
+
+    button {
+      display: inline-flex;
+      border: none;
+      background: transparent;
+      padding: 0;
+      color: $c-on-surface-variant;
+      cursor: pointer;
+      font-size: 10px;
+
+      &:hover {
+        color: $c-error;
+      }
+    }
+  }
+
+  &__input {
+    flex: 1;
+    min-width: 160px;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 4px 2px;
+    height: auto;
+
+    &.ant-input-affix-wrapper {
+      background: transparent;
+    }
+  }
+}

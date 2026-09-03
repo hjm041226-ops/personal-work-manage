@@ -1,0 +1,90 @@
+// ============================================================
+// ATELIER CMS 设计变量（单一来源：demo HTML 内联 palette + DESIGN.md）
+// 本文件通过 vite additionalData 全局注入，禁止在其它文件中再次 @use 本文件
+// ============================================================
+
+// ---------- 色板 ----------
+$c-bg: #f8f9ff;                     // 应用背景 surface
+$c-surface: #ffffff;                // surface-container-lowest 卡片/主面
+$c-surface-low: #eff4ff;            // surface-container-low 次级容器/表格头/只读
+$c-surface-container: #e5eeff;      // surface-container
+$c-surface-container-high: #dce9ff; // surface-container-high
+$c-surface-container-highest: #d3e4fe;
+$c-on-surface: #0b1c30;             // 正文
+$c-on-surface-variant: #45464d;     // 次级文本
+$c-outline: #76777d;                // 占位/描边
+$c-outline-variant: #c6c6cd;        // 输入框边框
+$c-primary: #000000;
+$c-on-primary: #ffffff;
+$c-primary-container: #131b2e;
+$c-on-primary-container: #7c839b;
+$c-secondary: #0051d5;              // 交互强调（选中态/主链接）
+$c-on-secondary: #ffffff;
+$c-secondary-container: #316bf3;
+$c-on-secondary-container: #fefcff;
+$c-error: #ba1a1a;
+$c-error-container: #ffdad6;
+$c-on-error-container: #93000a;
+$c-ring: #2563eb;                   // 焦点环/链接
+
+// 语义状态（Design.md）
+$c-success-bg: #ecfdf5;
+$c-success-text: #065f46;
+$c-success-dot: #059669;
+$c-warning-bg: #fffbeb;
+$c-warning-text: #92400e;
+$c-warning-dot: #d97706;
+$c-neutral-bg: #f1f5f9;
+$c-neutral-text: #334155;
+$c-danger: #dc2626;
+$c-divider: #e2e8f0;
+
+// ---------- 字体 ----------
+$font-sans: Inter, -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+$font-code: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+// ---------- 字号阶梯（Design.md typography） ----------
+$text-display-lg: 30px; $text-display-lg-lh: 38px;
+$text-headline-lg: 24px; $text-headline-lg-lh: 32px;
+$text-headline-md: 20px; $text-headline-md-lh: 28px;
+$text-headline-sm: 16px; $text-headline-sm-lh: 24px;
+$text-body-lg: 15px; $text-body-lg-lh: 24px;
+$text-body-md: 14px; $text-body-md-lh: 20px;
+$text-body-sm: 13px; $text-body-sm-lh: 18px;
+$text-label-md: 13px; $text-label-md-lh: 16px;
+$text-label-sm: 11px; $text-label-sm-lh: 14px;
+$text-code-sm: 12px; $text-code-sm-lh: 16px;
+
+// ---------- 间距（8pt 网格 + 4pt 微调） ----------
+$space-2xs: 0.125rem;
+$space-xs: 0.25rem;
+$space-sm: 0.5rem;
+$space-md: 0.75rem;
+$space-base: 1rem;
+$space-lg: 1.25rem;
+$space-xl: 1.5rem;
+$space-2xl: 2rem;
+$space-3xl: 2.5rem;
+
+// ---------- 圆角 ----------
+$radius-sm: 2px;
+$radius-md: 4px;
+$radius-lg: 8px;
+$radius-xl: 12px;
+$radius-pill: 9999px;
+
+// ---------- 布局 ----------
+$sidebar-w: 256px;
+$sidebar-collapsed: 72px;
+$header-h: 56px;
+$content-max: 1440px;
+
+// ---------- 阴影（Design.md 层级） ----------
+$shadow-level1: 0 1px 2px 0 rgba(15, 23, 42, 0.04);
+$shadow-level2: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+$shadow-level3: 0 20px 25px -5px rgba(15, 23, 42, 0.12), 0 8px 10px -6px rgba(15, 23, 42, 0.06);
+
+// ---------- 断点 ----------
+$bp-mobile: 480px;
+$bp-tablet: 768px;
+$bp-desktop: 1024px;

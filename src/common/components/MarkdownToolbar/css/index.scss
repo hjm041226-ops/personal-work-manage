@@ -1,0 +1,33 @@
+// ============================================================
+// MarkdownToolbar 样式
+// ============================================================
+
+.md-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px;
+  border-bottom: 1px solid $c-divider;
+  background: $c-surface-low;
+  border-radius: $radius-lg $radius-lg 0 0;
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: $radius-md;
+    background: transparent;
+    color: $c-on-surface-variant;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &:hover {
+      background: $c-surface-container;
+      color: $c-on-surface;
+    }
+  }
+}

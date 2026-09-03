@@ -1,0 +1,144 @@
+// ============================================================
+// WorksManage 样式
+// ============================================================
+
+.wm {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  padding-bottom: $space-2xl;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: $text-headline-md;
+    font-weight: 600;
+    color: $c-on-surface;
+    letter-spacing: -0.01em;
+  }
+
+  &__subtitle {
+    margin: 2px 0 0;
+    font-size: $text-body-sm;
+    color: $c-outline;
+  }
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    gap: $space-md;
+    flex-wrap: wrap;
+  }
+
+  &__search {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  &__search-icon {
+    color: $c-outline;
+  }
+
+  &__add {
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+
+  &__pills {
+    margin: 2px 0;
+  }
+
+  &__table {
+    background: $c-surface;
+    border: 1px solid $c-divider;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    box-shadow: $shadow-level1;
+
+    .ant-table {
+      background: transparent;
+    }
+  }
+}
+
+.wm-thumb {
+  width: 40px;
+  height: 40px;
+  border-radius: $radius-lg;
+  overflow: hidden;
+  background: $c-surface-container-high;
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.wm-cell-title {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+
+  &__name {
+    color: $c-on-surface;
+    font-size: $text-body-md;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: default;
+  }
+
+  &__sub {
+    font-family: $font-code;
+    font-size: $text-code-sm;
+    color: $c-outline;
+  }
+}
+
+.wm-cell-date {
+  font-size: $text-code-sm;
+  color: $c-outline;
+}
+
+.wm-cell-views {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: $text-code-sm;
+  color: $c-on-surface-variant;
+
+  &__icon {
+    font-size: 13px;
+    color: $c-outline;
+  }
+}
+
+.wm-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  justify-content: flex-end;
+
+  .ant-btn-text {
+    color: $c-on-surface-variant;
+
+    &:hover {
+      color: $c-secondary !important;
+      background: $c-surface-container;
+    }
+  }
+
+  .ant-btn-dangerous.ant-btn-text:hover {
+    color: $c-danger !important;
+    background: $c-error-container;
+  }
+}

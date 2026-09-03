@@ -1,0 +1,145 @@
+// ============================================================
+// CoverUpload 样式
+// ============================================================
+
+.cover-upload {
+  &__preview {
+    position: relative;
+    width: 100%;
+    height: 200px;
+    border-radius: $radius-lg;
+    overflow: hidden;
+    background: $c-surface-container-high;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  &__placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    color: $c-outline;
+    font-size: $text-body-sm;
+
+    .anticon {
+      font-size: 28px;
+    }
+  }
+
+  &__badge {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    padding: 2px 8px;
+    border-radius: $radius-sm;
+    background: $c-primary;
+    color: $c-on-primary;
+    font-size: $text-label-sm;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+  }
+
+  &__remove {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    color: $c-on-surface;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &:hover {
+      background: $c-error-container;
+      color: $c-error;
+    }
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-base;
+    flex-wrap: wrap;
+    margin-top: $space-sm;
+  }
+
+  &__file {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__file-name {
+    font-size: $text-label-md;
+    color: $c-on-surface;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 320px;
+  }
+
+  &__file-meta {
+    font-family: $font-code;
+    font-size: $text-code-sm;
+    color: $c-outline;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 34px;
+    padding: 0 14px;
+    border-radius: $radius-lg;
+    font-size: $text-label-md;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &--primary {
+      background: $c-primary;
+      color: $c-on-primary;
+      border-color: $c-primary;
+
+      &:hover {
+        background: $c-primary-container;
+        border-color: $c-primary-container;
+      }
+    }
+  }
+
+  &__btn--danger {
+    padding: 0 4px;
+  }
+
+  &__hint {
+    margin: $space-sm 0 0;
+    font-family: $font-code;
+    font-size: $text-code-sm;
+    color: $c-outline;
+  }
+}

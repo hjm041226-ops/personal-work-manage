@@ -1,0 +1,176 @@
+// ============================================================
+// ProfileEdit 样式
+// ============================================================
+
+.pe {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+  padding-bottom: $space-3xl;
+  max-width: 980px;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__head-left {
+    display: flex;
+    align-items: center;
+    gap: $space-base;
+  }
+
+  &__back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: $radius-lg;
+    background: $c-surface-container;
+    color: $c-on-surface;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.15s;
+
+    &:hover {
+      background: $c-surface-container-high;
+    }
+  }
+
+  &__heading {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: $text-headline-md;
+    font-weight: 600;
+    color: $c-on-surface;
+  }
+
+  &__subtitle {
+    margin: 2px 0 0;
+    font-size: $text-body-sm;
+    color: $c-outline;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: $space-lg;
+    align-items: start;
+
+    @media (max-width: $bp-tablet) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__count {
+    margin-top: 4px;
+    text-align: right;
+    font-family: $font-code;
+    font-size: $text-code-sm;
+    color: $c-outline;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: $space-base;
+    padding-top: $space-md;
+    border-top: 1px solid $c-divider;
+    margin-top: $space-md;
+
+    .ant-btn {
+      min-width: 110px;
+    }
+  }
+}
+
+.pe-card {
+  background: $c-surface;
+  border: 1px solid $c-divider;
+  border-radius: $radius-lg;
+  padding: $space-xl;
+  box-shadow: $shadow-level1;
+
+  &--avatar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  &--form {
+    min-width: 0;
+  }
+
+  &__identity {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-top: $space-md;
+  }
+
+  &__name {
+    font-size: $text-headline-sm;
+    font-weight: 600;
+    color: $c-on-surface;
+  }
+
+  &__role {
+    font-family: $font-code;
+    font-size: $text-code-sm;
+    color: $c-outline;
+  }
+
+  &__tip {
+    margin: $space-md 0 0;
+    font-size: $text-body-sm;
+    color: $c-outline;
+  }
+}
+
+.pe-avatar {
+  position: relative;
+  width: 110px;
+  height: 110px;
+
+  &__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid $c-surface;
+    box-shadow: $shadow-level2;
+    display: block;
+    background: $c-surface-container-high;
+  }
+
+  &__edit {
+    position: absolute;
+    right: 2px;
+    bottom: 2px;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: $c-primary;
+    color: $c-on-primary;
+    cursor: pointer;
+    box-shadow: $shadow-level2;
+    transition: background 0.15s;
+
+    &:hover {
+      background: $c-secondary;
+    }
+  }
+}

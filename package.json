@@ -1,0 +1,25 @@
+{
+  "name": "portfolio-cms-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "个人作品展示网站后台管理系统 (Atelier CMS) - Vue3 前端",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@ant-design/icons-vue": "^7.0.1",
+    "ant-design-vue": "^4.2.6",
+    "dayjs": "^1.11.11",
+    "pinia": "^2.1.7",
+    "vue": "^3.4.31",
+    "vue-router": "^4.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.5",
+    "sass": "^1.77.6",
+    "vite": "^5.3.3"
+  }
+}
