@@ -1,10 +1,16 @@
 <script setup>
 // ============================================================
-// CoverUpload —— 单封面：预览 + 更换/上传 + 删除
-// 使用 payload 架构：方法在 module/、变量在 state/、卸载 revoke 在 module/lifecycle.js
+// CoverUpload —— 单封面：预览 + 上传(C1)/更换/删除
+// 方法/上传逻辑在 module/，变量在 state/，卸载回收在 module/lifecycle.js
 // ============================================================
 import { computed } from 'vue'
-import { PictureOutlined, UploadOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons-vue'
+import {
+  PictureOutlined,
+  UploadOutlined,
+  DeleteOutlined,
+  EditOutlined,
+  LoadingOutlined,
+} from '@ant-design/icons-vue'
 import { IMG_FALLBACK } from '@/common/api/assets'
 import assemble from './asserblem'
 import './css/index.scss'
@@ -34,17 +40,16 @@ const displayMeta = computed(() => payload.fileInfo.meta || props.meta)
         class="cover-upload__img"
         :src="cover"
         :alt="displayName || '作品封面'"
-        :fallback="IMG_FALLBACK"
         @error="$event.target.src = IMG_FALLBACK"
       />
       <div v-else class="cover-upload__placeholder">
         <PictureOutlined />
-        <span>暂无封面</span>
+        <span>{{ payload.uploading ? '上传中...' : '暂无封面' }}</span>
       </div>
 
       <span v-if="badge && cover" class="cover-upload__badge">{{ badge }}</span>
       <button
-        v-if="showRemove && cover"
+        v-if="showRemove && cover && !payload.uploading"
         type="button"
         class="cover-upload__remove"
         aria-label="移除文件"
@@ -63,16 +68,37 @@ const displayMeta = computed(() => payload.fileInfo.meta || props.meta)
       <div class="cover-upload__actions">
         <a-upload
           :show-upload-list="false"
-          :before-upload="payload.pickFile"
+          :before-upload="payload.beforeUpload"
+          :custom-request="payload.customRequest"
+          :disabled="payload.uploading"
           accept=".png,.jpg,.jpeg,.webp"
         >
-          <button type="button" class="cover-upload__btn cover-upload__btn--primary">
-            <UploadOutlined v-if="!cover" />
+          <button
+            type="button"
+            class="cover-upload__btn cover-upload__btn--primary"
+            :disabled="payload.uploading"
+          >
+            <LoadingOutlined v-if="payload.uploading" />
+            <UploadOutlined v-else-if="!cover" />
             <EditOutlined v-else />
-            <span>{{ cover ? replaceLabel : '上传封面' }}</span>
+            <span>
+              {{
+                payload.uploading
+                  ? `上传中 ${payload.uploadPercent || 0}%`
+                  : cover
+                    ? replaceLabel
+                    : '上传封面'
+              }}
+            </span>
           </button>
         </a-upload>
-        <a-button v-if="showRemove && cover" class="cover-upload__btn--danger" danger type="text" @click="payload.removeCover()">
+        <a-button
+          v-if="showRemove && cover && !payload.uploading"
+          class="cover-upload__btn--danger"
+          danger
+          type="text"
+          @click="payload.removeCover()"
+        >
           <template #icon><DeleteOutlined /></template>
           删除
         </a-button>

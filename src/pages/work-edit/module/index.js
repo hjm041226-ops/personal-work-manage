@@ -12,9 +12,42 @@ export function cancelEdit(payload) {
   payload.goBack()
 }
 
-/** 保存修改：先校验 WorkForm，成功则模拟提交 */
+/**
+ * 组装 B4 完整请求体：
+ * 前端只编辑表单字段；表单之外的服务端字段（sub/badge/summary/descIntro/
+ * overlayLabel/stats/sortOrder/categoryLabel/status/views 等）原样保留，
+ * 避免 B4「全字段覆盖」把未编辑字段清空。
+ */
+export function buildEditBody(payload, data) {
+  const r = payload.record || {}
+  return {
+    title: data.title,
+    category: data.category,
+    date: data.date || '',
+    status: r.status || 'draft',
+    url: data.url || '',
+    repo: data.repo || '',
+    desc: data.desc || '',
+    tags: Array.isArray(data.tags) ? data.tags : [],
+    published: !!data.published,
+    featured: !!data.featured,
+    cover: data.cover || '',
+    coverFile: data.coverFile || '',
+    coverMeta: data.coverMeta || '',
+    sub: r.sub || '',
+    badge: r.badge || '',
+    categoryLabel: r.categoryLabel || '',
+    summary: r.summary || '',
+    descIntro: r.descIntro || '',
+    overlayLabel: r.overlayLabel || '',
+    stats: Array.isArray(r.stats) ? r.stats : [],
+    sortOrder: typeof r.sortOrder === 'number' ? r.sortOrder : 0,
+  }
+}
+
+/** 保存修改（B4）：校验表单 → PUT 完整对象 → 返回列表 */
 export async function saveEdit(payload) {
-  if (!payload.$formRef) return
+  if (!payload.$formRef || !payload.record) return
   const { ok, values } = await payload.$formRef.validate()
   if (!ok) {
     payload.$msg.warning('请检查表单必填项')
@@ -22,13 +55,13 @@ export async function saveEdit(payload) {
   }
   payload.saving = true
   try {
-    // TODO: 接入真实更新接口（api-request 预留）
-    await new Promise((resolve) => setTimeout(resolve, 400))
-    payload.$msg.success(`作品「${values.title}」修改已保存（静态演示）`)
+    const body = payload.buildEditBody(values)
+    await payload.api.updateWork(payload.record.id, body)
+    payload.$msg.success(`作品「${values.title}」修改已保存`)
     payload.goBack()
   } finally {
     payload.saving = false
   }
 }
 
-export default { goBack, cancelEdit, saveEdit }
+export default { goBack, cancelEdit, saveEdit, buildEditBody }

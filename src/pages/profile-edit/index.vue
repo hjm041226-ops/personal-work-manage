@@ -58,7 +58,7 @@ const rules = {
         </div>
         <div class="pe-card__identity">
           <span class="pe-card__name">{{ payload.name || '—' }}</span>
-          <span class="pe-card__role">创意总监 / 设计师</span>
+          <span class="pe-card__role">{{ payload.title || '—' }}</span>
         </div>
         <p class="pe-card__tip">支持 PNG / WEBP / JPG，不超过 5MB</p>
       </section>

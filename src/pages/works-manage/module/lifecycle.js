@@ -3,14 +3,10 @@
 // ============================================================
 
 export default {
-  async onMounted(payload) {
-    payload.loading = true
-    try {
-      payload.list = await payload.api.fetchWorks()
-      payload.computeCounts()
-      payload.applyFilter()
-    } finally {
-      payload.loading = false
-    }
+  onMounted(payload) {
+    payload.refresh()
+  },
+  onBeforeUnmount(payload) {
+    if (payload._searchTimer) clearTimeout(payload._searchTimer)
   },
 }

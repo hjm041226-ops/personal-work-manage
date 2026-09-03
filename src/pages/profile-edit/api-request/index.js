@@ -1,11 +1,23 @@
 // ============================================================
-// ProfileEdit - 请求函数（预留；真实资料更新接口待接入）
+// ProfileEdit - 请求函数（契约 D1 / D2 / D3）
 // ============================================================
+import { http } from '@/common/api/request'
 
-export async function updateProfile(payload, data) {
-  // TODO: 接入真实资料更新接口
-  await new Promise((resolve) => setTimeout(resolve, 400))
-  return { ok: true, ...data }
+/** 获取个人资料（D1） */
+export async function getProfile(payload) {
+  return http.get('/profile')
 }
 
-export default { updateProfile }
+/** 更新个人资料（D2） */
+export async function updateProfile(payload, data) {
+  return http.put('/profile', data)
+}
+
+/** 换头像（D3：multipart file，后端自动落库） */
+export async function uploadAvatar(payload, file) {
+  const form = new FormData()
+  form.append('file', file)
+  return http.post('/profile/avatar', form, { headers: { 'Content-Type': 'multipart/form-data' } })
+}
+
+export default { getProfile, updateProfile, uploadAvatar }

@@ -4,8 +4,9 @@
 
 export default function createState() {
   return {
-    // 新选择文件的本地元信息（覆盖 props.fileName/meta 的展示）
-    fileInfo: { name: '', meta: '' },
-    _objectUrl: '', // 本地预览 URL（卸载时 revoke）
+    fileInfo: { name: '', meta: '' }, // 新选择文件的元信息展示
+    uploading: false,
+    uploadPercent: 0,
+    _objectUrl: '', // 上传前的本地临时预览（成功后替换为服务器 URL）
   }
 }

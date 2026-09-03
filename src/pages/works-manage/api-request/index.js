@@ -1,20 +1,29 @@
 // ============================================================
-// WorksManage - 请求函数（静态期 mock；payload 自动装配）
+// WorksManage - 请求函数（契约 B1 列表 / B5 归档删除）
 // ============================================================
-import { getWorks } from '@/common/api/worksMock'
+import { http } from '@/common/api/request'
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-
-/** 获取作品列表（搜索/分类后续由后端完成，目前全量拉取后本地过滤） */
-export async function fetchWorks(payload) {
-  await delay(360) // 模拟网络延迟
-  return getWorks()
+/**
+ * 作品分页列表（契约 B1）
+ * params: { page, pageSize, category?, keyword?, status?, sortBy?, order? }
+ * 返回 { items, page, pageSize, total, categories }
+ */
+export async function fetchWorks(payload, params = {}) {
+  const query = {
+    page: params.page || 1,
+    pageSize: params.pageSize || 10,
+    category: params.category || 'all',
+    ...(params.keyword ? { keyword: params.keyword } : {}),
+    ...(params.status ? { status: params.status } : {}),
+    ...(params.sortBy ? { sortBy: params.sortBy } : {}),
+    ...(params.order ? { order: params.order } : {}),
+  }
+  return http.get('/works', { params: query })
 }
 
-/** 归档删除作品 */
+/** 归档删除（契约 B5：软删） */
 export async function deleteWork(payload, id) {
-  await delay(300)
-  return { ok: true, id }
+  return http.delete(`/works/${encodeURIComponent(id)}`)
 }
 
 export default { fetchWorks, deleteWork }

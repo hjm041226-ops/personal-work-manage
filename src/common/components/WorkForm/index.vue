@@ -3,7 +3,7 @@
 // WorkForm —— 上传 / 编辑作品共用表单（基础信息 + 封面 + 描述 + 属性展示配置）
 // 使用 payload 架构；暴露 validate / form / resetForm 给页面底部操作条
 // ============================================================
-import { computed, ref, watch } from 'vue'
+import { ref, watch } from 'vue'
 import {
   ProfileOutlined,
   PictureOutlined,
@@ -14,7 +14,7 @@ import {
 } from '@ant-design/icons-vue'
 import CoverUpload from '@/common/components/CoverUpload/index.vue'
 import MarkdownToolbar from '@/common/components/MarkdownToolbar/index.vue'
-import { CATEGORY_OPTIONS, DESC_MAX } from './state'
+import { DESC_MAX } from './state'
 import assemble from './asserblem'
 import './css/index.scss'
 
@@ -32,9 +32,6 @@ const descRef = ref(null)
 payload.$formEl = formEl
 payload.$descRef = descRef
 
-const categoryOptions = CATEGORY_OPTIONS.map((v) => ({ value: v, label: v }))
-const initialCoverName = computed(() => props.initial?.coverFile || '')
-const initialCoverMeta = computed(() => props.initial?.coverMeta || '')
 const descMax = DESC_MAX
 
 const rules = {
@@ -51,6 +48,7 @@ watch(
 
 defineExpose({
   validate: () => payload.validate(),
+  getData: () => payload.getData(),
   form: payload.form,
   resetForm: (init) => payload.resetForm(init || {}),
 })
@@ -76,7 +74,7 @@ function onTagEnter() {
       <a-form ref="formEl" :model="payload.form" :rules="rules" layout="vertical" class="wf-form">
         <a-form-item label="作品编号 (ID)">
           <div class="wf-id">
-            <span class="wf-id__hash">#{{ workId || '———' }}</span>
+            <span class="wf-id__hash">{{ workId ? `#${workId}` : '待后端生成' }}</span>
           </div>
         </a-form-item>
 
@@ -92,7 +90,7 @@ function onTagEnter() {
           <a-form-item name="category" label="作品分类" required>
             <a-select
               v-model:value="payload.form.category"
-              :options="categoryOptions"
+              :options="payload.categoryOptions"
               placeholder="请选择作品分类"
             />
           </a-form-item>
@@ -135,9 +133,10 @@ function onTagEnter() {
       </header>
       <CoverUpload
         v-model:cover="payload.form.cover"
-        :fileName="initialCoverName"
-        :meta="initialCoverMeta"
+        :fileName="payload.form.coverFile"
+        :meta="payload.form.coverMeta"
         badge="当前封面"
+        @change="payload.onCoverChange"
       />
     </section>
 

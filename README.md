@@ -1,37 +1,48 @@
 # ATELIER CMS · 个人作品后台管理系统（Vue3）
 
-由 `个人作品后台管理系统-demo`（HTML 原型 + PRD.md）转换而来的 Vue3 前端工程。
+由 `个人作品后台管理系统-demo`（HTML 原型 + PRD.md）转换而来，已按《整合接口契约》接入 Go 后端（`/api/v1/admin`）。
 
 ## 技术栈
 
-- Vue 3（组合式 API + `<script setup>`）+ Vite 5
+- Vue 3（组合式 API + `<script setup>`）+ Vite 5（dev 端口 **5174**）
 - ant-design-vue 4 + @ant-design/icons-vue
-- vue-router 4、pinia、dayjs、sass（scss）
+- vue-router 4、pinia、dayjs、sass（scss）、axios
 - 语言：JavaScript（目录约定均为 `.js`）
 
-## 快速开始
+## 快速开始（对接真实后端）
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173
+# 1) 修改 .env（或新建 .env.local 覆盖）：
+#    VITE_PROXY_TARGET = 后端地址，默认 http://localhost:8080（契约 §8.1 PORT 默认 8080）
+#    VITE_API_BASE     = 留空(同源代理)；生产构建时填后端源，如 https://api.example.com
+npm run dev      # http://localhost:5174（后端 CORS 默认白名单包含 127.0.0.1:5174）
 npm run build    # 产物输出到 dist/
 ```
 
-> 演示账号任意邮箱 + 密码即可登录（静态期无真实校验）。
+> 登录使用后端管理员账号（契约 A1：`ADMIN_EMAIL` / `ADMIN_PASSWORD`）；首次启动后端会自动种 4 条演示作品（PRJ-0001~0004）。
+
+## 后端对接要点
+
+- baseURL：`/api/v1/admin`（`common/api/request.js` 自动拼 `VITE_API_BASE`）
+- 鉴权：登录成功把 `data.token` 存 localStorage；除 login 外所有请求自动带 `Authorization: Bearer <token>`
+- 统一响应包裹 `{ code, message, data }`：请求层自动解包，成功直接返回 `data`
+- 401 → 清 token 跳登录页；`code !== 0` → toast 后端 message；上传类 500 且 message 含「文件存储未配置」→ 提示上传功能暂不可用
+- 接口映射详见「文档」；各页面 api-request 已全部替换为真实请求（不再使用 mock）
 
 ## 目录架构（pages + common）
 
 ```
 src/
-├─ main.js / App.vue / router/
+├─ main.js / App.vue / router/         # 路由含登录守卫（无 token 跳 /login）
 ├─ common/
 │  ├─ composables/        # 公共逻辑：usePayload（核心）、useFeedback、useDesignTokens
 │  ├─ components/         # 公共组件（AppShell、WorkForm、CoverUpload 等，见组件架构）
 │  ├─ config/             # 主题令牌（antd ConfigProvider 使用）
-│  ├─ api/                # 静态数据层：assets.js（素材地址）、worksMock.js（24 条作品）
+│  ├─ api/                # request.js（axios 封装）、assets.js（素材地址）
 │  ├─ assets/styles/      # _tokens.scss（设计变量）、global.scss（全局样式）
-│  └─ utils/              # format.js（日期/数字格式化）
-├─ store/user.js          # pinia 用户态（静态）
+│  └─ utils/              # format.js、auth.js（token 存取）
+├─ store/user.js          # pinia 用户态（token+user 持久化）
 └─ pages/                 # 页面：login / works-manage / work-upload / work-edit / profile-edit
 ```
 
@@ -42,7 +53,7 @@ src/
 ```
 组件名/
 ├─ index.vue            # <template> + 装配 payload + <style lang="scss">
-├─ api-request/         # 请求函数（暂返回 mock / Promise，留 TODO）
+├─ api-request/         # 请求函数（axios 调后端接口）
 ├─ asserblem/           # 装配：把 state/module/api 聚合后交给 usePayload
 ├─ components/          # 子组件（同样结构）
 ├─ module/              # 组件的方法
@@ -65,45 +76,31 @@ src/
 
 因此组件内方法不需要手动 import 请求模块或生命周期注册，全部默认装配进 payload。
 
-示例（作品管理页）：
-
-```js
-// api-request/index.js
-export const fetchWorks = async (p) => getWorks()          // 自动挂为 p.api.fetchWorks
-
-// module/lifecycle.js
-export default { onMounted: async (p) => { p.list = await p.api.fetchWorks() } }
-
-// module/index.js
-export const applyFilter = (p) => { /* 本地过滤 + 分页 */ }  // 自动挂为 p.applyFilter
-
-// index.vue（index 只做装配）
-const payload = assemble()                                   // 模板直接使用 payload.list / payload.applyFilter()
-```
-
 ## 页面与路由
 
-| 路由 | 页面 | 说明 |
+| 路由 | 页面 | 对接接口 |
 |---|---|---|
-| `/login` | login | 独立整屏登录 |
-| `/` → `/works` | — | 后台入口 |
-| `/works` | works-manage | 作品管理（检索/分类/分页/快捷操作） |
-| `/works/upload` | work-upload | 上传新作品 |
-| `/works/:id/edit` | work-edit | 编辑作品（从列表进入，静态取 mock 数据） |
-| `/profile` | profile-edit | 个人资料编辑 |
+| `/login` | login | A1 登录 |
+| `/` → `/works` | — | — |
+| `/works` | works-manage | B1 列表（搜索/分类/分页/计数）+ B5 归档删除 |
+| `/works/upload` | work-upload | B3 新建（发布/草稿）+ C1 封面上传 |
+| `/works/:id/edit` | work-edit | B2 详情回显 + B4 全字段保存 |
+| `/profile` | profile-edit | D1 资料 + D2 保存 + D3 换头像 |
+| 顶栏 | AppShell | A2 当前用户 / A3 退出；表单分类下拉：E1 分类字典 |
 
 ## 主题与设计变量
 
 - `common/assets/styles/_tokens.scss`：色板 / 字号 / 间距 / 圆角（取自 demo 内联 palette 与 DESIGN.md）。
-  经 `vite.config.js` 的 `scss.additionalData` 全局注入，组件 css 直接使用 `$c-*`、`$space-*` 等变量，无需手动 import。
+  经 `vite.config.js` 的 `scss.additionalData` 全局注入，组件 css 直接使用 `$c-*`、`$space-*` 等变量。
 - `common/config/themeTokens.js`：同一色板的 antd ConfigProvider 主题令牌（JS 侧单一来源）。
 
-## 后续优化（一期已完成项）
+## 待办 / 可优化
 
-- 全部页面为静态实现，`api-request/` 目录已按真实接口签名预留（TODO 标注），二期只需替换 mock 为真实请求。
-- 图片地址来自 demo 的外链 Google 图床，离线时由 IMG_FALLBACK 兜底占位。
+- 图片直链来自后端对象存储（`STORAGE_PUBLIC_BASE_URL`）；旧演示外链已移除，仅保留 IMG_FALLBACK 兜底占位。
 - antd 全量引入（构建产物偏大），如需优化可改为按需注册或 unplugin-vue-components 自动导入。
+- 登录态为 JWT + localStorage；如需刷新 token 机制，可按后端演进补充。
 
 ## 文档
 
-- 后端接口契约（面向 Go 后端开发）：`docs/后端接口文档.md` —— 数据模型 / 接口清单 / 响应示例 / 错误码 / 前端字段对照 / Go 落地建议
+- **接口契约（以 Go 后端为准）**：`docs/整合接口契约.md`（全集）、`docs/前端对接契约(后台管理系统).md`（后台组拆分版）
+- 早期草案：`docs/后端接口文档.md`（已并入整合契约，仅存档参考）

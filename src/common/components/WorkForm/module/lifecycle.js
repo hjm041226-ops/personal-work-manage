@@ -5,5 +5,6 @@
 export default {
   onMounted(payload) {
     payload.syncCount()
+    payload.loadCategories()
   },
 }

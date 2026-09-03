@@ -1,7 +1,7 @@
 // ============================================================
 // WorkForm - 方法
 // ============================================================
-import { DESC_MAX, TAG_MAX } from '../state'
+import { DESC_MAX, TAG_MAX, DEFAULT_CATEGORY_OPTIONS } from '../state'
 
 /** 表单校验入口（index.vue 暴露给页面） */
 export async function validate(payload) {
@@ -10,10 +10,49 @@ export async function validate(payload) {
   }
   try {
     await payload.$formEl.validate()
-    return { ok: true, values: { ...payload.form } }
+    return { ok: true, values: payload.getData() }
   } catch (e) {
     return { ok: false, errors: e && e.errorFields ? e.errorFields : e }
   }
+}
+
+/** 导出表单可写字段（页面据此组装 B3/B4 请求体） */
+export function getData(payload) {
+  const f = payload.form
+  return {
+    title: f.title || '',
+    category: f.category || '',
+    date: f.date || '',
+    url: f.url || '',
+    repo: f.repo || '',
+    desc: f.desc || '',
+    tags: Array.isArray(f.tags) ? [...f.tags] : [],
+    published: !!f.published,
+    featured: !!f.featured,
+    cover: f.cover || '',
+    coverFile: f.coverFile || '',
+    coverMeta: f.coverMeta || '',
+  }
+}
+
+/** 加载分类字典（契约 E1；失败静默回退默认中文字典） */
+export async function loadCategories(payload) {
+  try {
+    const res = await payload.api.fetchCategories()
+    const list = (res && res.categories) || []
+    if (list.length) {
+      payload.categoryOptions = list.map((c) => ({ value: c.key, label: c.label || c.key }))
+    }
+  } catch (e) {
+    payload.categoryOptions = DEFAULT_CATEGORY_OPTIONS.map((c) => ({ value: c.key, label: c.label }))
+  }
+}
+
+/** 封面事件（CoverUpload change）：同步 coverFile / coverMeta */
+export function onCoverChange(payload, info = {}) {
+  payload.form.cover = info.url || payload.form.cover
+  payload.form.coverFile = (info && info.fileName) || ''
+  payload.form.coverMeta = (info && info.meta) || ''
 }
 
 /** 重置为初始数据 */
@@ -26,9 +65,11 @@ export function resetForm(payload, initial = {}) {
     repo: initial.repo || '',
     desc: initial.desc || '',
     tags: Array.isArray(initial.tags) ? [...initial.tags] : [],
-    published: initial.published !== undefined ? initial.published : true,
-    featured: initial.featured !== undefined ? initial.featured : false,
+    published: initial.published !== undefined ? !!initial.published : true,
+    featured: initial.featured !== undefined ? !!initial.featured : false,
     cover: initial.coverFileUrl || initial.cover || '',
+    coverFile: initial.coverFile || '',
+    coverMeta: initial.coverMeta || '',
   })
   payload.syncCount()
 }
@@ -138,4 +179,4 @@ export function removeTag(payload, index) {
   payload.form.tags.splice(index, 1)
 }
 
-export default { validate, resetForm, syncCount, onDescInput, execCommand, addTag, removeTag }
+export default { validate, getData, loadCategories, onCoverChange, resetForm, syncCount, onDescInput, execCommand, addTag, removeTag }

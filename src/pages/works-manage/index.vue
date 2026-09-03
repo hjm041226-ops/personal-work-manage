@@ -13,7 +13,6 @@ import {
 } from '@ant-design/icons-vue'
 import WorkStatusTag from '@/common/components/WorkStatusTag/index.vue'
 import CategoryPills from '@/common/components/CategoryPills/index.vue'
-import { CATEGORIES } from '@/common/api/worksMock'
 import { formatViews, formatDate } from '@/common/utils/format'
 import { IMG_FALLBACK } from '@/common/api/assets'
 import assemble from './asserblem'
@@ -71,9 +70,9 @@ function onTableChange(pg) {
       </a-button>
     </div>
 
-    <!-- 分类胶囊 -->
+    <!-- 分类胶囊（数据来自 B1 响应，label 中文 + 计数） -->
     <CategoryPills
-      :categories="CATEGORIES"
+      :categories="payload.pills"
       :counts="payload.counts"
       :active-key="payload.category"
       class="wm__pills"
@@ -84,7 +83,7 @@ function onTableChange(pg) {
     <div class="wm__table">
       <a-table
         :columns="columns"
-        :data-source="payload.visible"
+        :data-source="payload.items"
         :loading="payload.loading"
         :pagination="paginationProps"
         row-key="id"
@@ -105,11 +104,11 @@ function onTableChange(pg) {
             </div>
           </template>
 
-          <!-- 标题 / 类别 -->
+          <!-- 标题 / 类别（sub 可空/缺键：契约 2.9 omitempty） -->
           <template v-else-if="column.key === 'title'">
             <div class="wm-cell-title">
               <span class="wm-cell-title__name">{{ record.title }}</span>
-              <span class="wm-cell-title__sub">{{ record.sub }}</span>
+              <span v-if="record.sub" class="wm-cell-title__sub">{{ record.sub }}</span>
             </div>
           </template>
 

@@ -18,7 +18,7 @@ import './css/index.scss'
 const payload = assemble()
 
 const userStore = useUserStore()
-const displayName = computed(() => userStore.name || 'ATELIER')
+const displayName = computed(() => userStore.displayName || 'ATELIER')
 const displayAvatar = computed(() => userStore.avatar || '')
 </script>
 

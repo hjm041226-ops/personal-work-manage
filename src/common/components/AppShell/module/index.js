@@ -12,10 +12,12 @@ export function onMenuClick(payload, { key }) {
 
 /** 顶栏用户菜单 */
 export function onUserMenuClick(payload, { key }) {
+  const userStore = useUserStore()
   if (key === 'profile') {
     payload.$router.push('/profile')
   } else if (key === 'logout') {
-    const userStore = useUserStore()
+    // 契约 A3 无状态：通知服务端（失败不影响本地退出）+ 本地清理
+    payload.api.logout().catch(() => {})
     userStore.logout()
     payload.$msg.success('已退出登录')
     payload.$router.push('/login')

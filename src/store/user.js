@@ -1,31 +1,42 @@
 // ============================================================
-// 用户 store（一期静态；后续接入真实登录态）
+// 用户 store（接入契约 A1/A2/D1：token + user，localStorage 持久化）
 // ============================================================
 import { defineStore } from 'pinia'
-import { IMG_AVATAR_USER, IMG_AVATAR_PROFILE } from '@/common/api/assets'
+import { getToken, setToken, getUser, setUser, clearSession } from '@/common/utils/auth'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    // 静态演示默认已登录，便于直接预览后台页面；真实环境应从鉴权接口恢复
-    isLogin: true,
-    name: 'Elena Vance',
-    title: '创意总监 / 设计师',
-    email: 'elena.vance@atelier-cms.io',
-    website: 'https://elenavance.design',
-    bio: '专注极致美学、数字产品交互与品牌视觉构建。致力于通过严谨的结构与克制的视觉语言，创造恒久的数字体验。',
-    avatar: IMG_AVATAR_USER,
-    profileAvatar: IMG_AVATAR_PROFILE,
+    token: getToken() || '',
+    user: getUser(), // { id,email,name,title,bio,website,avatar,role }
   }),
+  getters: {
+    isLogin: (state) => !!state.token,
+    displayName: (state) => (state.user && state.user.name) || '',
+    avatar: (state) => (state.user && state.user.avatar) || '',
+  },
   actions: {
-    /** 模拟登录（一期无真实校验） */
-    login({ email = '', name = 'Elena Vance', remember = false } = {}) {
-      this.isLogin = true
-      if (email) this.email = email
-      this.name = name
-      return Promise.resolve({ ok: true })
+    /** 登录成功（A1 响应 { token, user }） */
+    setSession({ token, user } = {}) {
+      if (token) {
+        this.token = token
+        setToken(token)
+      }
+      if (user) {
+        this.user = user
+        setUser(user)
+      }
     },
+    /** 更新用户信息（A2 / D1 / D2 / D3 之后同步） */
+    updateUser(user = {}) {
+      if (!user) return
+      this.user = { ...(this.user || {}), ...user }
+      setUser(this.user)
+    },
+    /** 退出：本地清理（契约 A3 无状态，可不调用接口） */
     logout() {
-      this.isLogin = false
+      this.token = ''
+      this.user = null
+      clearSession()
     },
   },
 })

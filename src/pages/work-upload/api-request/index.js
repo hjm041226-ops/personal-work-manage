@@ -1,11 +1,11 @@
 // ============================================================
-// WorkUpload - 请求函数（预留；发布接口待接入）
+// WorkUpload - 请求函数（契约 B3 新建作品）
 // ============================================================
+import { http } from '@/common/api/request'
 
-export async function createWork(payload, data) {
-  // TODO: 接入真实发布接口
-  await new Promise((resolve) => setTimeout(resolve, 400))
-  return { ok: true, id: data && data.workId }
+/** 新建作品（B3）：body 含 status（published / draft），id 由后端生成 */
+export async function createWork(payload, body) {
+  return http.post('/works', body)
 }
 
 export default { createWork }

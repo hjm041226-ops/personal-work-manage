@@ -8,6 +8,7 @@
 //     /profile            个人资料编辑
 // ============================================================
 import { createRouter, createWebHistory } from 'vue-router'
+import { getToken } from '@/common/utils/auth'
 
 const AppShell = () => import('@/common/components/AppShell/index.vue')
 
@@ -56,6 +57,20 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes,
+})
+
+// 登录守卫（契约 §2.1：除登录页外均需携带 token）
+router.beforeEach((to) => {
+  const hasToken = !!getToken()
+  if (to.path === '/login') {
+    // 已登录访问登录页 → 回首页
+    if (hasToken) return { path: '/works' }
+    return true
+  }
+  if (!hasToken) {
+    return { path: '/login', query: { redirect: to.fullPath } }
+  }
+  return true
 })
 
 router.afterEach((to) => {

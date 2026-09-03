@@ -14,8 +14,8 @@ const payload = assemble()
 const formRef = ref(null)
 payload.$formRef = formRef
 
-// 演示用新编号（真实环境由后端生成）
-const NEW_WORK_ID = 'PRJ-8822'
+// 稳定引用：避免每次渲染生成新对象触发 WorkForm 的 watch 重置
+const EMPTY_INITIAL = {}
 </script>
 
 <template>
@@ -33,8 +33,8 @@ const NEW_WORK_ID = 'PRJ-8822'
       </div>
     </div>
 
-    <!-- 表单（上传模式，无回显初始值） -->
-    <WorkForm ref="formRef" mode="upload" :work-id="NEW_WORK_ID" :initial="{}" />
+    <!-- 表单（上传模式；编号由后端 B3 生成后返回，此处展示占位） -->
+    <WorkForm ref="formRef" mode="upload" work-id="" :initial="EMPTY_INITIAL" />
 
     <!-- 底部操作条 -->
     <div class="wu__bar">

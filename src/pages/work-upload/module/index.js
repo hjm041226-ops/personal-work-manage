@@ -6,13 +6,27 @@ export function goBack(payload) {
   payload.$router.push('/works')
 }
 
-/** 保存草稿（静态演示：不校验直接提示） */
-export function saveDraft(payload) {
-  payload.$msg.success('已保存为草稿（静态演示）')
+/** 组装 B3 请求体（上传页没有历史字段，只提交表单内容） */
+export function buildCreateBody(data, status = 'published') {
+  return {
+    title: data.title,
+    category: data.category,
+    date: data.date || '',
+    status,
+    url: data.url || '',
+    repo: data.repo || '',
+    desc: data.desc || '',
+    tags: Array.isArray(data.tags) ? data.tags : [],
+    published: !!data.published,
+    featured: !!data.featured,
+    cover: data.cover || '',
+    coverFile: data.coverFile || '',
+    coverMeta: data.coverMeta || '',
+  }
 }
 
-/** 发布作品：先校验 WorkForm，成功后模拟提交并返回列表 */
-export async function publish(payload) {
+/** 内部提交：status = published 发布 / draft 保存草稿 */
+async function submitCreate(payload, status) {
   if (!payload.$formRef) return
   const { ok, values } = await payload.$formRef.validate()
   if (!ok) {
@@ -21,15 +35,23 @@ export async function publish(payload) {
   }
   payload.saving = true
   try {
-    // TODO: 通过 api-request/createWork 提交真实接口
-    const res = await payload.api.createWork({ ...values, workId: payload.$route.query.id || 'PRJ-8822' })
-    if (res && res.ok) {
-      payload.$msg.success(`作品「${values.title}」已发布（静态演示）`)
-      payload.goBack()
-    }
+    const body = payload.buildCreateBody(values, status)
+    await payload.api.createWork(body) // id 由后端生成
+    payload.$msg.success(status === 'draft' ? '已保存为草稿' : '作品已发布')
+    payload.goBack()
   } finally {
     payload.saving = false
   }
 }
 
-export default { goBack, saveDraft, publish }
+/** 保存草稿（B3 + status=draft） */
+export function saveDraft(payload) {
+  return submitCreate(payload, 'draft')
+}
+
+/** 发布作品（B3 + status=published） */
+export function publish(payload) {
+  return submitCreate(payload, 'published')
+}
+
+export default { goBack, buildCreateBody, saveDraft, publish }
