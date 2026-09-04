@@ -11,7 +11,7 @@ export const DEFAULT_CATEGORY_OPTIONS = [
   { key: 'others', label: '其他' },
 ]
 
-export const DESC_MAX = 2000
+export const DESC_MAX = 10000
 export const TAG_MAX = 8
 
 export default function createState(props) {
