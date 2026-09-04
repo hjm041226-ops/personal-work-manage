@@ -218,3 +218,116 @@
     }
   }
 }
+
+// 基础信息卡片右上角操作区(「从 GitHub 导入」按钮 + REQUIRED 标记)
+.wf-card__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-sm;
+}
+
+// GitHub 仓库导入弹窗
+.wf-gh {
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+  }
+
+  &__search {
+    width: 300px;
+    max-width: 100%;
+  }
+
+  &__tip {
+    margin: $space-sm 0 $space-base;
+    font-family: $font-code;
+    font-size: $text-code-sm;
+    color: $c-outline;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: $space-sm;
+    max-height: 420px;
+    overflow-y: auto;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-base;
+    padding: $space-sm $space-base;
+    border: 1px solid $c-divider;
+    border-radius: $radius-md;
+    background: $c-surface-low;
+  }
+
+  &__main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &__name {
+    font-size: $text-label-md;
+    font-weight: 600;
+    color: $c-on-surface;
+  }
+
+  &__lang {
+    padding: 1px 8px;
+    border-radius: $radius-sm;
+    background: $c-surface-container;
+    font-family: $font-code;
+    font-size: $text-code-sm;
+    color: $c-on-surface-variant;
+  }
+
+  &__link {
+    font-size: $text-body-sm;
+    color: $c-secondary;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  &__desc {
+    margin-top: 4px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    font-size: $text-body-sm;
+    color: $c-outline;
+  }
+
+  &__topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  &__topic {
+    font-family: $font-code;
+    font-size: $text-code-sm;
+    color: $c-secondary;
+  }
+
+  &__empty {
+    padding: 32px 0;
+    text-align: center;
+    font-size: $text-body-sm;
+    color: $c-outline;
+  }
+}

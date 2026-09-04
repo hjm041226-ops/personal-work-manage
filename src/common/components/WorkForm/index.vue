@@ -3,7 +3,7 @@
 // WorkForm —— 上传 / 编辑作品共用表单（基础信息 + 封面 + 描述 + 属性展示配置）
 // 使用 payload 架构；暴露 validate / form / resetForm 给页面底部操作条
 // ============================================================
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import {
   ProfileOutlined,
   PictureOutlined,
@@ -11,10 +11,12 @@ import {
   SlidersOutlined,
   CloseOutlined,
   PlusOutlined,
+  GithubOutlined,
 } from '@ant-design/icons-vue'
 import CoverUpload from '@/common/components/CoverUpload/index.vue'
 import MarkdownToolbar from '@/common/components/MarkdownToolbar/index.vue'
 import { DESC_MAX } from './state'
+import { GITHUB_OWNER } from '@/common/utils/github'
 import assemble from './asserblem'
 import './css/index.scss'
 
@@ -33,6 +35,18 @@ payload.$formEl = formEl
 payload.$descRef = descRef
 
 const descMax = DESC_MAX
+const ghOwner = GITHUB_OWNER
+
+// GitHub 仓库弹窗：按名称/简介前端过滤
+const filteredGithubRepos = computed(() => {
+  const q = (payload.githubQuery || '').trim().toLowerCase()
+  const list = payload.githubRepos || []
+  if (!q) return list
+  return list.filter(
+    (r) =>
+      (r.name || '').toLowerCase().includes(q) || (r.description || '').toLowerCase().includes(q)
+  )
+})
 
 const rules = {
   title: [{ required: true, whitespace: true, message: '请输入作品名称', trigger: 'blur' }],
@@ -68,7 +82,18 @@ function onTagEnter() {
           <ProfileOutlined class="wf-card__icon" />
           基础信息
         </h2>
-        <span class="wf-card__flag">REQUIRED</span>
+        <div class="wf-card__actions">
+          <a-button
+            v-if="mode === 'upload'"
+            class="wf-gh-open"
+            size="small"
+            @click="payload.openGithubImport()"
+          >
+            <template #icon><GithubOutlined /></template>
+            从 GitHub 导入
+          </a-button>
+          <span class="wf-card__flag">REQUIRED</span>
+        </div>
       </header>
 
       <a-form ref="formEl" :model="payload.form" :rules="rules" layout="vertical" class="wf-form">
@@ -210,5 +235,74 @@ function onTagEnter() {
         </div>
       </div>
     </section>
+
+    <!-- GitHub 仓库导入弹窗(仅上传模式的「从 GitHub 导入」使用) -->
+    <a-modal
+      v-model:open="payload.githubOpen"
+      title="从 GitHub 仓库导入"
+      :footer="null"
+      width="760px"
+      destroy-on-close
+      @cancel="payload.closeGithubImport()"
+    >
+      <div class="wf-gh">
+        <div class="wf-gh__toolbar">
+          <a-input-search
+            v-model:value="payload.githubQuery"
+            class="wf-gh__search"
+            placeholder="搜索仓库名称 / 简介"
+            allow-clear
+          />
+          <a-button size="small" :loading="payload.githubLoading" @click="payload.loadGithubRepos()">
+            刷新
+          </a-button>
+        </div>
+        <p class="wf-gh__tip">
+          仅列出 {{ ghOwner }} 的公开仓库(已排除 fork 与已归档);GitHub 匿名接口限流 60
+          次/小时,失败时稍后点「刷新」重试。
+        </p>
+
+        <a-spin :spinning="payload.githubLoading">
+          <div v-if="filteredGithubRepos.length" class="wf-gh__list">
+            <div v-for="repo in filteredGithubRepos" :key="repo.name" class="wf-gh__item">
+              <div class="wf-gh__main">
+                <div class="wf-gh__row">
+                  <span class="wf-gh__name">{{ repo.name }}</span>
+                  <span v-if="repo.language" class="wf-gh__lang">{{ repo.language }}</span>
+                  <a
+                    v-if="repo.htmlUrl"
+                    class="wf-gh__link"
+                    :href="repo.htmlUrl"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    GitHub ↗
+                  </a>
+                </div>
+                <div class="wf-gh__desc">{{ repo.description || '该仓库暂无简介' }}</div>
+                <div v-if="repo.topics && repo.topics.length" class="wf-gh__topics">
+                  <span v-for="t in repo.topics" :key="t" class="wf-gh__topic">#{{ t }}</span>
+                </div>
+              </div>
+              <a-button
+                type="primary"
+                size="small"
+                :loading="payload.githubImporting === repo.name"
+                @click="payload.applyGithubImport(repo)"
+              >
+                导入
+              </a-button>
+            </div>
+          </div>
+          <div v-else-if="!payload.githubLoading" class="wf-gh__empty">
+            {{
+              payload.githubRepos.length
+                ? '没有匹配的仓库'
+                : '没有可导入的公开仓库;若账号无误,可能是 GitHub 匿名限流,请稍后点「刷新」重试'
+            }}
+          </div>
+        </a-spin>
+      </div>
+    </a-modal>
   </div>
 </template>

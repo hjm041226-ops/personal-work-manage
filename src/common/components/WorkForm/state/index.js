@@ -36,5 +36,11 @@ export default function createState(props) {
     // 描述字数统计
     descCount: (src.desc || '').length,
     newTag: '',
+    // GitHub 导入弹窗(仅上传模式使用)
+    githubOpen: false,
+    githubLoading: false,
+    githubRepos: [],
+    githubQuery: '',
+    githubImporting: '', // 正在导入的仓库名(用于按钮 loading)
   }
 }

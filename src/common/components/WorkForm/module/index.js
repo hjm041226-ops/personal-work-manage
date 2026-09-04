@@ -2,6 +2,13 @@
 // WorkForm - 方法
 // ============================================================
 import { DESC_MAX, TAG_MAX, DEFAULT_CATEGORY_OPTIONS } from '../state'
+import {
+  GITHUB_OWNER,
+  COVER_PLACEHOLDER_URL,
+  listPublicRepos,
+  fetchReadme,
+  pickCoverFromReadme,
+} from '@/common/utils/github'
 
 /** 表单校验入口（index.vue 暴露给页面） */
 export async function validate(payload) {
@@ -179,4 +186,91 @@ export function removeTag(payload, index) {
   payload.form.tags.splice(index, 1)
 }
 
-export default { validate, getData, loadCategories, onCoverChange, resetForm, syncCount, onDescInput, execCommand, addTag, removeTag }
+// ---------------- GitHub 仓库导入(上传页「从 GitHub 导入」) ----------------
+
+/** 打开导入弹窗;首次打开时自动拉取仓库列表 */
+export function openGithubImport(payload) {
+  payload.githubOpen = true
+  if (!payload.githubRepos.length && !payload.githubLoading) {
+    payload.loadGithubRepos()
+  }
+}
+
+/** 关闭导入弹窗 */
+export function closeGithubImport(payload) {
+  payload.githubOpen = false
+}
+
+/** 拉取账号公开仓库列表(自动排除 fork / archived,调用 GitHub 匿名 API) */
+export async function loadGithubRepos(payload) {
+  payload.githubLoading = true
+  try {
+    payload.githubRepos = await listPublicRepos()
+  } catch (e) {
+    payload.$msg.error((e && e.message) || '拉取 GitHub 仓库失败,请稍后重试')
+  } finally {
+    payload.githubLoading = false
+  }
+}
+
+/**
+ * 导入单个仓库到当前表单:
+ *  title=仓库名;repo=仓库地址;url=仓库 homepage;desc=README(Markdown 原样);
+ *  tags=原标签+仓库 topics+主语言(去重、限 8 个);cover=README 首图,取不到用占位图。
+ *  category/date/published/featured 等用户已填内容保持不变。
+ */
+export async function applyGithubImport(payload, repo) {
+  if (!repo || !repo.name) return
+  payload.githubImporting = repo.name
+  try {
+    const branch = repo.defaultBranch || 'main'
+    const md = await fetchReadme(GITHUB_OWNER, repo.name, branch)
+    const truncated = md.length > DESC_MAX
+    const desc = truncated ? md.slice(0, DESC_MAX) : md
+    const cover =
+      pickCoverFromReadme(md, GITHUB_OWNER, repo.name, branch) || COVER_PLACEHOLDER_URL
+
+    const cur = payload.form
+    cur.title = repo.name
+    cur.repo = repo.htmlUrl || ''
+    cur.url = repo.homepage || ''
+    cur.desc = desc
+    cur.tags = [
+      ...new Set([
+        ...(cur.tags || []),
+        ...(repo.topics || []),
+        ...(repo.language ? [repo.language] : []),
+      ]),
+    ].slice(0, TAG_MAX)
+    cur.cover = cover
+    cur.coverFile = ''
+    cur.coverMeta = ''
+    payload.syncCount()
+
+    payload.githubOpen = false
+    payload.$msg.success(`已从 GitHub 导入「${repo.name}」,请核对后保存`)
+    if (truncated) payload.$msg.warning(`README 超过 ${DESC_MAX} 字,描述已截断`)
+    if (!md) payload.$msg.info('该仓库没有 README,作品描述留空')
+  } catch (e) {
+    payload.$msg.error((e && e.message) || `导入「${repo.name}」失败,请稍后重试`)
+  } finally {
+    payload.githubImporting = ''
+  }
+}
+
+export default {
+  validate,
+  getData,
+  loadCategories,
+  onCoverChange,
+  resetForm,
+  syncCount,
+  onDescInput,
+  execCommand,
+  addTag,
+  removeTag,
+  openGithubImport,
+  closeGithubImport,
+  loadGithubRepos,
+  applyGithubImport,
+}
