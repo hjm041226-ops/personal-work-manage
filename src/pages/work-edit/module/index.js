@@ -57,7 +57,7 @@ export async function saveEdit(payload) {
   try {
     const body = payload.buildEditBody(values)
     await payload.api.updateWork(payload.record.id, body)
-    payload.$msg.success(`作品「${values.title}」修改已保存`)
+    payload.$msg.success(`作品${values.title} 修改已保存`)
     payload.goBack()
   } finally {
     payload.saving = false

@@ -21,8 +21,9 @@ import './css/index.scss'
 const payload = assemble()
 
 const columns = [
-  { title: '缩略图', key: 'cover', width: 100, align: 'center' },
-  { title: '作品标题 / 类别', key: 'title', minWidth: 200 },
+  { title: '封面', key: 'cover', width: 100, align: 'center' },
+  {title: '类别', key: 'category', width: 60, align: 'center'},
+  { title: '作品标题', key: 'title', minWidth: 200 },
   { title: '发布时间', key: 'date', width: 120, align: 'center' },
   { title: '展示状态', key: 'status', width: 100, align: 'center' },
   { title: '浏览量', key: 'views', width: 110, align: 'center' },
@@ -91,7 +92,7 @@ function onTableChange(pg) {
         @change="onTableChange"
       >
         <template #bodyCell="{ column, record }">
-          <!-- 缩略图 -->
+          <!-- 封面 -->
           <template v-if="column.key === 'cover'">
             <div class="wm-thumb">
               <img
@@ -104,7 +105,12 @@ function onTableChange(pg) {
             </div>
           </template>
 
-          <!-- 标题 / 类别（sub 可空/缺键：契约 2.9 omitempty） -->
+          <!-- 类别 -->
+           <template v-else-if="column.key === 'category'">
+              <span>{{ record.category }}</span>
+           </template>
+
+          <!-- 标题（sub 可空/缺键：契约 2.9 omitempty） -->
           <template v-else-if="column.key === 'title'">
             <div class="wm-cell-title">
               <span class="wm-cell-title__name">{{ record.title }}</span>

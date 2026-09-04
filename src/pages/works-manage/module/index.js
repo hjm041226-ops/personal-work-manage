@@ -1,6 +1,7 @@
 // ============================================================
 // WorksManage - 方法（服务端过滤/分页，契约 B1/B5）
 // ============================================================
+import {h} from "vue"
 
 const CATEGORY_LABEL_FALLBACK = {
   web: '网站',
@@ -88,14 +89,18 @@ export function goUpload(payload) {
 
 /** 行内操作：查看（契约未要求详情阅读页，占位提示） */
 export function onView(payload, row) {
-  payload.$msg.info(`「${row.title}」为后台编辑视图，可点击编辑进入`)
+  payload.$msg.info(`${row.title} 为后台编辑视图，可点击编辑进入`)
 }
 
 /** 行内操作：归档删除（B5，软删后服务端与公开站即时下架） */
 export function onDelete(payload, row) {
   payload.$msg.confirm({
-    title: '归档删除',
-    content: `确定要归档删除「${row.title}」吗？删除后公开站将立即下架该作品。`,
+    title: '删除',
+    content: h('div', [
+    '确定要删除 ',
+    h('strong', row.title),
+    ' 吗？删除后公开站将立即下架该作品。',
+    ]),
     okText: '删除',
     okType: 'danger',
     cancelText: '取消',

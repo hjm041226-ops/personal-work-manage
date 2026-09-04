@@ -82,3 +82,11 @@ a {
   max-width: $content-max;
   margin: 0 auto;
 }
+
+.ant-table-tbody > tr:hover > td {
+  background: $c-table-hover !important;
+}
+
+.ant-menu-light .ant-menu-item-selected {
+  background-color: #bfcfe5;
+}
