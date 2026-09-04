@@ -21,12 +21,12 @@ import './css/index.scss'
 const payload = assemble()
 
 const columns = [
-  { title: '缩略图', key: 'cover', width: 72 },
-  { title: '作品标题 / 类别', key: 'title', minWidth: 260 },
-  { title: '发布时间', key: 'date', width: 120 },
-  { title: '展示状态', key: 'status', width: 100 },
-  { title: '浏览量', key: 'views', width: 110 },
-  { title: '操作', key: 'action', width: 170, align: 'right' },
+  { title: '缩略图', key: 'cover', width: 100, align: 'center' },
+  { title: '作品标题 / 类别', key: 'title', minWidth: 200 },
+  { title: '发布时间', key: 'date', width: 120, align: 'center' },
+  { title: '展示状态', key: 'status', width: 100, align: 'center' },
+  { title: '浏览量', key: 'views', width: 110, align: 'center' },
+  { title: '操作', key: 'action', width: 170, align: 'center' },
 ]
 
 const paginationProps = computed(() => ({

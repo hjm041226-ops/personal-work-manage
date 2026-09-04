@@ -4,13 +4,14 @@
 // ============================================================
 import usePayload from '@/common/composables/usePayload'
 import createState from '../state'
-import module from '../module'
+import methods from '../module'
+import lifecycle from '../module/lifecycle'
 import api from '../api-request'
 
 export default function assemble({ props, emit, refs = {} } = {}) {
   return usePayload({
     state: () => createState(props),
-    module,
+    module: { index: methods, lifecycle },
     api,
     context: { props, emit },
   })

@@ -7,7 +7,8 @@ export function goBack(payload) {
 }
 
 /** 组装 B3 请求体（上传页没有历史字段，只提交表单内容） */
-export function buildCreateBody(data, status = 'published') {
+// 注意：module 方法统一由 usePayload 前置注入 payload 首参，故签名必须为 (payload, data, status)。
+export function buildCreateBody(payload, data, status = 'published') {
   return {
     title: data.title,
     category: data.category,
