@@ -136,3 +136,41 @@ export function pickCoverFromReadme(md, owner, repo, branch = 'main') {
   }
   return ''
 }
+
+/**
+ * 把整段 README Markdown 里的图片地址统一改写成绝对 http(s) URL,
+ * 使导入后的描述落库、在任意渲染器里都能直接显示图片:
+ *  - 相对路径 ./assets/a.png → https://raw.githubusercontent.com/{owner}/{repo}/{branch}/assets/a.png
+ *  - github.com/.../blob/... 页链接 → raw.githubusercontent.com 等价地址
+ *  - 已是绝对地址 / data: URI 保持不变
+ * 支持 ![alt](url "title") 与 <img src="..."> 两种写法;
+ * 围栏代码块(``` / ~~~)内的示例文本不会被误改写。
+ */
+export function normalizeReadmeImages(md, owner, repo, branch = 'main') {
+  if (!md) return md
+  const toAbs = (raw) => normalizeImageSrc(raw, owner, repo, branch) || raw
+
+  // 先罩住围栏代码块,避免把示例代码里的图片语法也改写掉
+  const fences = []
+  md = md.replace(/```[\s\S]*?```|~~~[\s\S]*?~~~/g, (block) => {
+    fences.push(block)
+    return `\u0000F${fences.length - 1}\u0000`
+  })
+
+  // Markdown 图片:![alt](url "title")
+  md = md.replace(/!\[([^\]]*)\]\(([^)\s]+)(\s+["'][^"']*["'])?\)/g, (whole, alt, rawUrl, title) => {
+    const angled = rawUrl.startsWith('<') && rawUrl.endsWith('>')
+    const inner = angled ? rawUrl.slice(1, -1) : rawUrl
+    const url = toAbs(inner)
+    return `![${alt}](${angled ? `<${url}>` : url}${title || ''})`
+  })
+
+  // HTML 图片:<img src="url" .../>
+  md = md.replace(
+    /(<img\b[^>]*\bsrc\s*=\s*)(["'])([^"']+)\2([^>]*>)/gi,
+    (whole, pre, quote, src, post) => `${pre}${quote}${toAbs(src)}${quote}${post}`
+  )
+
+  // 还原代码块
+  return md.replace(/\u0000F(\d+)\u0000/g, (_, i) => fences[Number(i)])
+}

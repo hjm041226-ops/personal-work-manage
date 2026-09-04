@@ -8,6 +8,7 @@ import {
   listPublicRepos,
   fetchReadme,
   pickCoverFromReadme,
+  normalizeReadmeImages,
 } from '@/common/utils/github'
 
 /** 表单校验入口（index.vue 暴露给页面） */
@@ -224,9 +225,22 @@ export async function applyGithubImport(payload, repo) {
   payload.githubImporting = repo.name
   try {
     const branch = repo.defaultBranch || 'main'
-    const md = await fetchReadme(GITHUB_OWNER, repo.name, branch)
+    // README 里的图片地址多是相对路径 / github blob 页链接,先把它们改写为
+    // 可直接访问的绝对 URL,再落库,保证渲染描述时图片能正常显示
+    const md = normalizeReadmeImages(
+      await fetchReadme(GITHUB_OWNER, repo.name, branch),
+      GITHUB_OWNER,
+      repo.name,
+      branch
+    )
     const truncated = md.length > DESC_MAX
-    const desc = truncated ? md.slice(0, DESC_MAX) : md
+    let desc = md
+    if (truncated) {
+      // 尽量按行截断,避免把某张图片的 markdown 语法从中间切断导致裂图
+      desc = md.slice(0, DESC_MAX)
+      const cut = desc.lastIndexOf('\n')
+      if (cut > 0) desc = desc.slice(0, cut)
+    }
     const cover =
       pickCoverFromReadme(md, GITHUB_OWNER, repo.name, branch) || COVER_PLACEHOLDER_URL
 
